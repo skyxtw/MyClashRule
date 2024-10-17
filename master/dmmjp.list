@@ -1,13 +1,17 @@
 # 内容：JP
-# 数量：11条
-DOMAIN-SUFFIX,ideapocket.com
-DOMAIN-SUFFIX,s1s1s1.com
-DOMAIN-SUFFIX,moodyz.com
-DOMAIN-SUFFIX,prestige-av.com
-DOMAIN-SUFFIX,av-e-body.com
-DOMAIN-SUFFIX,hnext.jp
-DOMAIN-SUFFIX,unext.jp
-DOMAIN-SUFFIX,mgstage.com
-DOMAIN-SUFFIX,faleno.jp
-DOMAIN-SUFFIX,dahlia-av.jp
-DOMAIN-SUFFIX,ikyu.com
+# 数量：14条
+payload:
+  - '+.ideapocket.com'
+  - '+.s1s1s1.com'
+  - '+.moodyz.com'
+  - '+.prestige-av.com'
+  - '+.av-e-body.com'
+  - '+.hnext.jp'
+  - '+.unext.jp'
+  - '+.mgstage.com'
+  - '+.faleno.jp'
+  - '+.dahlia-av.jp'
+  - '+.ikyu.com'
+  - '+.kawaiikawaii.jp'
+  - '+.premium-beauty.com'
+  - '+.wanz-factory.com'
