@@ -139,7 +139,6 @@ rules:
   - RULE-SET,usd_domain,💶 Wallet
   - RULE-SET,steamcn_domain,DIRECT
   - RULE-SET,steam_domain,🎮 Steam
-  - RULE-SET,cn!_domain,🚀 默认代理
   - RULE-SET,google_ip,🍀 Google
   - RULE-SET,apple_ip,🍎 Apple
   - RULE-SET,telegram_ip,📲 Telegram
@@ -258,6 +257,7 @@ rules:
   - DOMAIN-SUFFIX,sooplive.co.kr,📺 Sooplive
   - DOMAIN-SUFFIX,sooplive.com,📺 Sooplive
   - RULE-SET,cn_ip,DIRECT
+  - RULE-SET,cn!_domain,🚀 默认代理
   - MATCH,🐟 漏网之鱼
 
 # 规则集
