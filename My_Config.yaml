@@ -1,59 +1,27 @@
-# 机场订阅，名称不能重复
-proxy-providers:
-  Bitz_Net:
-    type: http
-    interval: 86400
-    health-check:
-      enable: true
-      url: https://www.gstatic.com/generate_204
-      interval: 300
-    proxy: 🟢 直连
-    url: "https://let.bnsubservdom.com/api/v1/client/subscribe?token=a9d75d8e1b9602188211869d36006878"
-    override:
-      udp: true
-      
-# 用于下载订阅时指定UA
-global-ua: clash.meta
-    
+# 必读！！！
+# 此配置为覆写配置模板，不含节点以及订阅配置，不知道用途的不要用。
+# 机场订阅
+
 # 全局配置 
-port: 7890
-socks-port: 7891
-redir-port: 7892
-mixed-port: 7893
-tproxy-port: 7894
-ipv6: false
+mixed-port: 7890
 allow-lan: true
+bind-address: "*"
+ipv6: false
 unified-delay: true
 tcp-concurrent: true
-  
-geodata-mode: false
-geodata-loader: standard
-geo-auto-update: true
-geo-update-interval: 48
-geox-url:
-  geoip: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
-  geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
-  mmdb: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb"
-  asn: "https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb"
-  
-# 控制面板
-external-controller: 0.0.0.0:9090
-secret: ""
-external-ui: ui
-external-ui-url: "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip"
-
-# 匹配进程 always/strict/off
-find-process-mode: off
-global-client-fingerprint: chrome
+log-level: info
 keep-alive-idle: 600
-keep-alive-interval: 30
-
-# 策略组选择和fakeip缓存
+keep-alive-interval: 15
 profile:
   store-selected: true
   store-fake-ip: true
-  
-# 流量嗅探
+
+external-controller: 0.0.0.0:9090
+secret: ""
+external-ui: ui
+external-ui-url: "https://gh-proxy.com/https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages.zip"
+
+# 嗅探
 sniffer:
   enable: true
   sniff:
@@ -64,73 +32,49 @@ sniffer:
       ports: [443, 8443]
     QUIC:
       ports: [443, 8443]
-  force-domain:
-    - +.v2ex.com
   skip-domain:
-    - "dlg.io.mi.com"
+    - "Mijia Cloud"
     - "+.push.apple.com"
-    - "+.apple.com"
-    
-# 代理模式
+
+# 入站
 tun:
   enable: true
-  stack: mixed
-  mtu: 9000
-  dns-hijack:
-    - "any:53"
-    - "tcp://any:53"
+  stack: mixed   ##如果内核版本大于v1.19.31，此处可以改为自研协议栈 mips ，理论上性能更好。
+  dns-hijack: ["any:53", "tcp://any:53"]
   auto-route: true
   auto-redirect: true
   auto-detect-interface: true
-  
+
 # DNS模块
 dns:
   enable: true
-  listen: 0.0.0.0:1053
+  cache-algorithm: arc
   ipv6: false
-  respect-rules: true
-  # 模式切换 redir-host / fake-ip
   enhanced-mode: fake-ip
-  fake-ip-range: 28.0.0.1/8
-  # 模式切换 whitelist/blacklist 
-  # 黑名单模式表示如果匹配成功则不返回 Fake-IP, 白名单模式时只有匹配成功才返回 Fake-IP
+  fake-ip-range: 198.18.0.0/16
   fake-ip-filter-mode: blacklist
   fake-ip-filter:
+    - "*"
     - "+.lan"
     - "+.local"
-    - geosite:private
-    - geosite:cn
+    - "+.market.xiaomi.com"
   default-nameserver:
     - 223.5.5.5
-    - 119.29.29.29
-  proxy-server-nameserver:
-    - 223.5.5.5
-    - 119.29.29.29
   nameserver:
-    - 223.5.5.5
-    - 119.29.29.29
-  nameserver-policy:
-    "rule-set:private_domain,cn_domain":
-    - 223.5.5.5
-    - 119.29.29.29
-    "rule-set:geolocation-!cn":
-      - "https://dns.cloudflare.com/dns-query"
-      - "https://dns.google/dns-query"
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
  
-   
-proxies:
-- name: "🟢 直连"
-  type: direct
-  udp: true
- 
+# 出站策略，根据自己情况调整每个策略里分组排序，增删都可以，比如把美国自动放到第一个，比如删除香港故转，注意别漏掉表情逗号等。
+# 如果相应分组没有筛选到对应的国家，请根据自己节点名字调整筛选关键字。
+# 没有再使用锚点和icon图标，是考虑很多新手修改难度，这样新手修改某个分组更容易些。
 # 锚点
-pr: &pr {type: select, proxies: [🚀 节点选择, 🔯 香港故转, 🔯 日本故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 美国自动, ♻️ 台湾自动, ♻️ 新加坡自动, ♻️ 韩国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇺🇲 美国节点, 🇨🇳 台湾节点, 🇸🇬 新加坡节点, 🇰🇷 韩国节点, 🌐 全部节点, 🟢 直连]}
+pr: &pr {type: select, proxies: [🚀 节点选择, 🔯 香港故转, 🔯 日本故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 美国自动, ♻️ 台湾自动, ♻️ 新加坡自动, ♻️ 韩国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇺🇲 美国节点, 🇨🇳 台湾节点, 🇸🇬 新加坡节点, 🇰🇷 韩国节点, 🌐 全部节点, DIRECT]}
 # 策略组
 proxy-groups:
-  - {name: 🚀 节点选择, type: select, proxies: [🔯 香港故转, 🔯 日本故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 美国自动, ♻️ 台湾自动, ♻️ 新加坡自动, ♻️ 韩国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇺🇲 美国节点, 🇨🇳 台湾节点, 🇸🇬 新加坡节点, 🇰🇷 韩国节点, 🌐 全部节点, 🟢 直连]}
+  - {name: 🚀 节点选择, type: select, proxies: [🔯 香港故转, 🔯 日本故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 美国自动, ♻️ 台湾自动, ♻️ 新加坡自动, ♻️ 韩国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇺🇲 美国节点, 🇨🇳 台湾节点, 🇸🇬 新加坡节点, 🇰🇷 韩国节点, 🌐 全部节点, DIRECT]}
   - {name: 📹 YouTube,!!merge <<: *pr}
   - {name: 🍀 Google,!!merge <<: *pr}
-  - {name: 🤖 ChatGPT,!!merge <<: *pr}
+  - {name: 🤖 AI,!!merge <<: *pr}
   - {name: 👨🏿‍💻 GitHub,!!merge <<: *pr}
   - {name: 🐬 OneDrive,!!merge <<: *pr}
   - {name: 🪟 Microsoft,!!merge <<: *pr}
@@ -141,89 +85,222 @@ proxy-groups:
   - {name: 🎥 AppleTV+,!!merge <<: *pr}
   - {name: ✈️ Speedtest,!!merge <<: *pr}
   - {name: 💶 PayPal,!!merge <<: *pr}
-  - {name: 🍎 Apple, type: select, proxies: [🟢 直连, 🚀 节点选择]}
-  - {name: 🍑 DMMCOJP, type: select, proxies: [🟢 直连, ♻️ 日本自动, 🇯🇵 日本节点]}
-  - {name: 📺 巴哈姆特, type: select, proxies: [🟢 直连, ♻️ 台湾自动, 🇨🇳 台湾节点]}
-  - {name: 🎯 全球直连, type: select, proxies: [🟢 直连, 🚀 节点选择]}
-  - {name: 🐟 漏网之鱼,!!merge <<: *pr}
-  - {name: 🇭🇰 香港节点, type: select, include-all: true, filter: "(?i)港|hk|hongkong|hong kong"}
-  - {name: 🇯🇵 日本节点, type: select, include-all: true, filter: "(?i)日|jp|japan"}
-  - {name: 🇺🇲 美国节点, type: select, include-all: true, filter: "(?i)美|us|unitedstates|united states"}
-  - {name: 🇨🇳 台湾节点, type: select, include-all: true, filter: "(?i)台|新北|彰化|TW|Taiwan"}
-  - {name: 🇸🇬 新加坡节点, type: select, include-all: true, filter: "(?i)新加坡|坡|狮城|SG|Singapore"}
-  - {name: 🇰🇷 韩国节点, type: select, include-all: true, filter: "(?i)KR|Korea|KOR|首尔|韩|韓"}
-  - {name: 🔯 香港故转, type: fallback, include-all: true, tolerance: 20, interval: 300, filter: "(?=.*(港|HK|(?i)Hong))^((?!(台|日|韩|新|深|美)).)*$"}
-  - {name: 🔯 日本故转, type: fallback, include-all: true, tolerance: 20, interval: 300, filter: "(?=.*(日|JP|(?i)Japan))^((?!(港|台|韩|新|美)).)*$" }
+  - {name: 🎮 Steam, !!merge <<: *pr}
+  - {name: 🍎 Apple, !!merge <<: *pr}
+  - {name: 🍑 DMMCOJP, type: select, proxies: [DIRECT, ♻️ 日本自动, 🇯🇵 日本节点]}
+  - {name: 📺 巴哈姆特, type: select, proxies: [DIRECT, ♻️ 台湾自动, 🇨🇳 台湾节点]}
+  - {name: ⬇️ Sooplive下载节点, type: select, include-all: true, filter: "^((?!(GB|Date|Reset|套餐)).)*$"}
+  - {name: ⬇️ Pandalive下载节点, type: select, include-all: true, filter: "^((?!(GB|Date|Reset|套餐)).)*$"}
+  - {name: ⬇️ Olived下载节点, type: select, include-all: true, filter: "^((?!(GB|Date|Reset|套餐)).)*$"}
+  - {name: 📺 Sooplive, type: select, proxies: [DIRECT, 🚀 节点选择, 🔯 香港故转, 🔯 日本故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 美国自动, ♻️ 台湾自动, ♻️ 新加坡自动, ♻️ 韩国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇺🇲 美国节点, 🇨🇳 台湾节点, 🇸🇬 新加坡节点, 🇰🇷 韩国节点, ⬇️ Sooplive下载节点, 🌐 全部节点]}
+  - {name: 📺 Pandalive, type: select, proxies: [DIRECT, 🚀 节点选择, 🔯 香港故转, 🔯 日本故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 美国自动, ♻️ 台湾自动, ♻️ 新加坡自动, ♻️ 韩国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇺🇲 美国节点, 🇨🇳 台湾节点, 🇸🇬 新加坡节点, 🇰🇷 韩国节点, ⬇️ Pandalive下载节点, 🌐 全部节点]}
+  - {name: 📺 Olived, type: select, proxies: [DIRECT, 🚀 节点选择, 🔯 香港故转, 🔯 日本故转, ♻️ 香港自动, ♻️ 日本自动, ♻️ 美国自动, ♻️ 台湾自动, ♻️ 新加坡自动, ♻️ 韩国自动, ♻️ 自动选择, 🇭🇰 香港节点, 🇯🇵 日本节点, 🇺🇲 美国节点, 🇨🇳 台湾节点, 🇸🇬 新加坡节点, 🇰🇷 韩国节点, ⬇️ Olived下载节点, 🌐 全部节点]}
+  - {name: 🐟 漏网之鱼, !!merge <<: *pr}
+  - {name: 🇭🇰 香港节点, type: select, include-all: true, filter: "(?=.*(港|HK|(?i)Hong))^((?!(台|日|韩|新|深|美)).)*$"}
+  - {name: 🇯🇵 日本节点, type: select, include-all: true, filter: "(?=.*(日|JP|(?i)Japan))^((?!(港|台|韩|新|美)).)*$"}
+  - {name: 🇸🇬 狮城节点, type: select, include-all: true, filter: "(?=.*(新加坡|坡|狮城|SG|Singapore))^((?!(台|日|韩|深|美)).)*$"}
+  - {name: 🇺🇲 美国节点, type: select, include-all: true, filter: "(?=.*(美|US|(?i)States|America))^((?!(港|台|韩|新|日)).)*$"}
+  - {name: 🔯 香港故转, type: fallback, include-all: true, interval: 300, filter: "(?=.*(港|HK|(?i)Hong))^((?!(台|日|韩|新|深|美)).)*$"}
+  - {name: 🔯 日本故转, type: fallback, include-all: true, interval: 300, filter: "(?=.*(日|JP|(?i)Japan))^((?!(港|台|韩|新|美)).)*$"}
+  - {name: 🔯 狮城故转, type: fallback, include-all: true, interval: 300, filter: "(?=.*(新加坡|坡|狮城|SG|Singapore))^((?!(台|日|韩|深|美)).)*$"}
+  - {name: 🔯 美国故转, type: fallback, include-all: true, interval: 300, filter: "(?=.*(美|US|(?i)States|America))^((?!(港|台|韩|新|日)).)*$"}
   - {name: ♻️ 香港自动, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "(?=.*(港|HK|(?i)Hong))^((?!(台|日|韩|新|深|美)).)*$"}
-  - {name: ♻️ 日本自动, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "(?=.*(日|JP|(?i)Japan))^((?!(港|台|韩|新|美)).)*$" }
+  - {name: ♻️ 日本自动, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "(?=.*(日|JP|(?i)Japan))^((?!(港|台|韩|新|美)).)*$"}
+  - {name: ♻️ 狮城自动, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "(?=.*(新加坡|坡|狮城|SG|Singapore))^((?!(港|台|韩|日|美)).)*$"}
   - {name: ♻️ 美国自动, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "(?=.*(美|US|(?i)States|America))^((?!(港|台|日|韩|新)).)*$"}
-  - {name: ♻️ 台湾自动, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "(?=.*(台|新北|彰化|TW|Taiwan))^((?!(港|美|日|韩|新)).)*$"}
-  - {name: ♻️ 新加坡自动, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "(?=.*(新加坡|坡|狮城|SG|Singapore))^((?!(港|台|日|韩|美)).)*$"}
-  - {name: ♻️ 韩国自动, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "(?=.*(KR|Korea|KOR|首尔|韩|韓))^((?!(港|台|日|美|新)).)*$"}
-  - {name: ♻️ 自动选择, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "^((?!(直连)).)*$"}
+  - {name: ♻️ 自动选择, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "^((?!(DIRECT)).)*$"}
   - {name: 🌐 全部节点, type: select, include-all: true}
+
+# 规则匹配
 rules:
-  - RULE-SET,private_domain,🟢 直连
-  - RULE-SET,apple_domain,🍎 Apple
-  - RULE-SET,proxylite,🚀 节点选择
-  - RULE-SET,ai,🤖 ChatGPT
-  - RULE-SET,github_domain,👨🏿‍💻 GitHub
+  - AND,((RULE-SET,cn!_domain),(DST-PORT,443),(NETWORK,UDP)),REJECT
+  - RULE-SET,private_ip,DIRECT,no-resolve
+  - RULE-SET,private_domain,DIRECT
+  - RULE-SET,ai_domain,🤖 AI
   - RULE-SET,youtube_domain,📹 YouTube
   - RULE-SET,google_domain,🍀 Google
+  - RULE-SET,github_domain,👨🏿‍💻 GitHub
   - RULE-SET,onedrive_domain,🐬 OneDrive
+  - RULE-SET,microsoftcn_domain,DIRECT
   - RULE-SET,microsoft_domain,🪟 Microsoft
-  - RULE-SET,tiktok_domain,🎵 TikTok
-  - RULE-SET,speedtest_domain,✈️ Speedtest
+  - RULE-SET,applecn_domain,DIRECT
+  - RULE-SET,apple_domain,🍎 Apple
   - RULE-SET,telegram_domain,📲 Telegram
+  - RULE-SET,tiktok_domain,🎵 TikTok
   - RULE-SET,netflix_domain,🎥 NETFLIX
   - RULE-SET,disneyplus_domain,🎥 Disney+
+  - RULE-SET,paypal_domain,💶 Wallet
+  - RULE-SET,binance_domain,💶 Wallet
+  - RULE-SET,okx_domain,💶 Wallet
+  - RULE-SET,usd_domain,💶 Wallet
+  - RULE-SET,steamcn_domain,DIRECT
+  - RULE-SET,steam_domain,🎮 Steam
+  - RULE-SET,cn!_domain,🚀 默认代理
+  - RULE-SET,google_ip,🍀 Google
+  - RULE-SET,apple_ip,🍎 Apple
+  - RULE-SET,telegram_ip,📲 Telegram
+  - RULE-SET,netflix_ip,🎥 NETFLIX
   - RULE-SET,Bahamut_domain,📺 巴哈姆特
   - DOMAIN-SUFFIX,playno1.com,📺 巴哈姆特
-  - RULE-SET,paypal_domain,💶 PayPal
+  
   - RULE-SET,dlsite_domain,🍑 DMMCOJP
   - RULE-SET,dmm-ads_domain,🍑 DMMCOJP
   - RULE-SET,dmm-ads@ads_domain,🍑 DMMCOJP
   - RULE-SET,dmm-porn_domain,🍑 DMMCOJP
   - RULE-SET,dmm_domain,🍑 DMMCOJP
-  - RULE-SET,geolocation-!cn,🚀 节点选择
-  - RULE-SET,cn_domain,🎯 全球直连
-  - RULE-SET,google_ip,🍀 Google,no-resolve
-  - RULE-SET,netflix_ip,🎥 NETFLIX,no-resolve
-  - RULE-SET,telegram_ip,📲 Telegram,no-resolve
-  - RULE-SET,cn_ip,🎯 全球直连
+
+  # ==================== 综合发行平台与在线点播 ====================
+  - DOMAIN-SUFFIX,dmm.co.jp,🍑 DMMCOJP
+  - DOMAIN-SUFFIX,dmm.com,🍑 DMMCOJP
+  - DOMAIN-SUFFIX,fanza.com,🍑 DMMCOJP
+  - DOMAIN-SUFFIX,fanza.jp,🍑 DMMCOJP
+  - DOMAIN-SUFFIX,mgstage.com,🍑 DMMCOJP
+  - DOMAIN-SUFFIX,duga.jp,🍑 DMMCOJP
+  - DOMAIN-SUFFIX,ap-mgs.com,🍑 DMMCOJP
+  - DOMAIN-SUFFIX,gyutto.com,🍑 DMMCOJP
+
+  # ==================== 北都 / CA 集团主要厂牌 ====================
+  - DOMAIN-SUFFIX,s1s1s1.com,🍑 DMMCOJP          # S1 NO.1 STYLE
+  - DOMAIN-SUFFIX,moodyz.com,🍑 DMMCOJP          # MOODYZ
+  - DOMAIN-SUFFIX,ideapocket.com,🍑 DMMCOJP      # IdeaPocket (IP社)
+  - DOMAIN-SUFFIX,attackers.net,🍑 DMMCOJP       # Attackers
+  - DOMAIN-SUFFIX,premium-beauty.net,🍑 DMMCOJP  # Premium
+  - DOMAIN-SUFFIX,madonna-av.com,🍑 DMMCOJP      # Madonna
+  - DOMAIN-SUFFIX,ebody-av.com,🍑 DMMCOJP        # E-BODY
+  - DOMAIN-SUFFIX,wanz-factory.com,🍑 DMMCOJP    # WANZ FACTORY
+  - DOMAIN-SUFFIX,fitch-av.com,🍑 DMMCOJP        # Fitch
+  - DOMAIN-SUFFIX,honnaka.jp,🍑 DMMCOJP          # 本中 (Honnaka)
+  - DOMAIN-SUFFIX,dasdas.jp,🍑 DMMCOJP           # Das!
+  - DOMAIN-SUFFIX,kawaiikawaii.jp,🍑 DMMCOJP     # kawaii*
+  - DOMAIN-SUFFIX,kira-kira-av.com,🍑 DMMCOJP    # Kira☆Kira
+  - DOMAIN-SUFFIX,muku.tv,🍑 DMMCOJP             # 无垢 (Muku)
+  - DOMAIN-SUFFIX,rookie-av.jp,🍑 DMMCOJP        # Rookie
+
+  # ==================== FALENO / DAHLIA 系 ====================
+  - DOMAIN-SUFFIX,faleno.jp,🍑 DMMCOJP            # FALENO
+  - DOMAIN-SUFFIX,dahlia-av.jp,🍑 DMMCOJP         # DAHLIA (熟女系)
+  - DOMAIN-SUFFIX,faleno-tube.com,🍑 DMMCOJP      # FALENO TUBE
+  - DOMAIN-SUFFIX,ugokitaigirls.com,🍑 DMMCOJP    # 动きたいガールズ (FALENO 关联企划)
+
+  # ==================== 知名独立厂牌 / 关联片商 ====================
+  - DOMAIN-SUFFIX,sod.co.jp,🍑 DMMCOJP           # SOD (Soft On Demand)
+  - DOMAIN-SUFFIX,prestige-av.com,🍑 DMMCOJP     # PRESTIGE
+  - DOMAIN-SUFFIX,faleno.jp,🍑 DMMCOJP           # FALENO
+  - DOMAIN-SUFFIX,kmp-av.com,🍑 DMMCOJP          # KMP (Million / Circus)
+  - DOMAIN-SUFFIX,gloryquest.com,🍑 DMMCOJP      # Glory Quest
+  - DOMAIN-SUFFIX,hmp.jp,🍑 DMMCOJP              # H.M.P
+  - DOMAIN-SUFFIX,tameikegoro.jp,🍑 DMMCOJP      # 溜池ゴロー
+  - DOMAIN-SUFFIX,venus-av.com,🍑 DMMCOJP        # VENUS
+  - DOMAIN-SUFFIX,oppai-av.com,🍑 DMMCOJP        # OPPAI
+  - DOMAIN-SUFFIX,muteki-av.com,🍑 DMMCOJP       # MUTEKI
+
+  # ==================== 素人 / 街拍 / 盗摄系厂牌 ====================
+  - DOMAIN-SUFFIX,to-satsu.com,🍑 DMMCOJP         # 盗撮.com
+  - DOMAIN-SUFFIX,siroto-av.com,🍑 DMMCOJP        # SIRO (素人 / MGStage 系)
+  - DOMAIN-SUFFIX,c0930.com,🍑 DMMCOJP            # 素人系 C0930
+  - DOMAIN-SUFFIX,h4610.com,🍑 DMMCOJP            # 素人系 H4610
+  - DOMAIN-SUFFIX,kin8tengoku.com,🍑 DMMCOJP      # 金8天国
+  - DOMAIN-SUFFIX,ch2.club,🍑 DMMCOJP             # Channel2
+  - DOMAIN-SUFFIX,my-wife.cc,🍑 DMMCOJP           # 人妻花園 (My-Wife)
+  - DOMAIN-SUFFIX,namanaka.biz,🍑 DMMCOJP         # 生中 (Namanaka)
+  - DOMAIN-SUFFIX,g-queen.jp,🍑 DMMCOJP           # G-Queen
+  - DOMAIN-SUFFIX,waap.co.jp,🍑 DMMCOJP           # WAAP (素人/企划)
+
+  # ==================== 更多主流 / 企划 / 独立片商 ====================
+  - DOMAIN-SUFFIX,befreebe.com,🍑 DMMCOJP         # BeFree
+  - DOMAIN-SUFFIX,aurora-project.com,🍑 DMMCOJP   # Aurora Project
+  - DOMAIN-SUFFIX,million-av.com,🍑 DMMCOJP       # Million (KMP 旗下)
+  - DOMAIN-SUFFIX,circus-av.com,🍑 DMMCOJP        # Circus (KMP 旗下)
+  - DOMAIN-SUFFIX,shiroutotv.com,🍑 DMMCOJP       # 素人TV
+  - DOMAIN-SUFFIX,s-cute.com,🍑 DMMCOJP           # S-Cute
+  - DOMAIN-SUFFIX,center-village.net,🍑 DMMCOJP   # 中村企画 (Center Village)
+  - DOMAIN-SUFFIX,crystal-e.net,🍑 DMMCOJP        # Crystal映像
+  - DOMAIN-SUFFIX,alicejapan.co.jp,🍑 DMMCOJP     # Alice Japan
+  - DOMAIN-SUFFIX,glory-q.com,🍑 DMMCOJP          # Glory Quest 官网备用
+  - DOMAIN-SUFFIX,snis.jp,🍑 DMMCOJP              # S1 宣传站短链/重定向域
+  - DOMAIN-SUFFIX,hibino-av.com,🍑 DMMCOJP        # 日比野
+  - DOMAIN-SUFFIX,realworks-av.com,🍑 DMMCOJP     # Real Works
+  - DOMAIN-SUFFIX,tma.co.jp,🍑 DMMCOJP            # TMA (二次元COS/特摄企划)
+  - DOMAIN-SUFFIX,cine-magic.com,🍑 DMMCOJP       # CineMagic (女搜查官/特摄系)
+  - DOMAIN-SUFFIX,giga-web.jp,🍑 DMMCOJP          # GIGA (女战士/特摄受难系)
+  - DOMAIN-SUFFIX,zen-pictures.net,🍑 DMMCOJP     # ZEN Pictures (特摄战队系)
+  - DOMAIN-SUFFIX,ruby-av.com,🍑 DMMCOJP          # Ruby
+  - DOMAIN-SUFFIX,h-m-p.jp,🍑 DMMCOJP             # HMP 备用域名
+  - DOMAIN-SUFFIX,dogma.co.jp,🍑 DMMCOJP          # DOGMA
+  - DOMAIN-SUFFIX,cross-av.com,🍑 DMMCOJP         # CROSS (AV OPEN / CROSS 企划)
+  - DOMAIN-SUFFIX,max-a.co.jp,🍑 DMMCOJP          # MAX-A
+  - DOMAIN-SUFFIX,km-produce.com,🍑 DMMCOJP
+
+  # ==================== 定制 / 无码 / 独立配信厂牌 ====================
+  - DOMAIN-SUFFIX,caribbeancom.com,🍑 DMMCOJP    # 加勒比 (Caribbeancom)
+  - DOMAIN-SUFFIX,caribbeancompr.com,🍑 DMMCOJP  # 加勒比 PR
+  - DOMAIN-SUFFIX,1pondo.tv,🍑 DMMCOJP           # 一本道 (1Pondo)
+  - DOMAIN-SUFFIX,heyzo.com,🍑 DMMCOJP           # HEYZO
+  - DOMAIN-SUFFIX,pacopacomama.com,🍑 DMMCOJP    # 天然むすめ / Pacopacomama
+  - DOMAIN-SUFFIX,10musume.com,🍑 DMMCOJP        # 10musume
+  - DOMAIN-SUFFIX,tokyo-hot.com,🍑 DMMCOJP       # 东京热 (Tokyo-Hot)
+  - DOMAIN-SUFFIX,fc2.com,🍑 DMMCOJP             # FC2
+
+  # ==================== 补充分发与元数据 / 刮削相关 ====================
+  - DOMAIN-SUFFIX,av-wiki.net,🍑 DMMCOJP          # AV-Wiki 资料站
+  - DOMAIN-SUFFIX,airav.wiki,🍑 DMMCOJP           # AirAV 资讯/刮削
+  - DOMAIN-SUFFIX,xcity.jp,🍑 DMMCOJP             # XCITY (片商汇总/女优名鉴)
+  - DOMAIN-SUFFIX,arzon.jp,🍑 DMMCOJP             # ARZON (发售元数据检索)
+  - DOMAIN-SUFFIX,  seesaawiki.jp,🍑 DMMCOJP 
+
+  - DOMAIN-SUFFIX,tokyoadultguide.com,DIRECT
+  - DOMAIN-SUFFIX,pandalive.co.kr,📺 Pandalive
+  - DOMAIN-SUFFIX,live-video.net,📺 Olived
+  - DOMAIN-SUFFIX,sooplive.co.kr,📺 Sooplive
+  - DOMAIN-SUFFIX,sooplive.com,📺 Sooplive
+  - RULE-SET,cn_ip,DIRECT
   - MATCH,🐟 漏网之鱼
+
+# 规则集
+## type：可选http/file/inline  behavior：可选domain/ipcidr/classical format：可选yaml/text/mrs
 rule-anchor:
   ip: &ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}
   domain: &domain {type: http, interval: 86400, behavior: domain, format: mrs}
-  qcy: &qcy {type: http, interval: 86400, behavior: domain, format: text}
+  domain_text: &domain_text {type: http, interval: 86400, behavior: domain, format: text}
   class: &class {type: http, interval: 86400, behavior: classical, format: text}
-rule-providers: 
-  private_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"}
-  proxylite: {!!merge <<: *class, url: "https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/master/ProxyLite.list"}
-  ai: {!!merge <<: *class, url: "https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/master/AI.list"}
-  youtube_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/youtube.mrs"}
-  google_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.mrs"}
-  github_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs"}
-  telegram_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/telegram.mrs"}
-  netflix_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/netflix.mrs"}
-  disneyplus_domain: {!!merge <<: *class, url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/DisneyPlus.list"}
-  Bahamut_domain: {!!merge <<: *class, url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Bahamut.list"}
-  paypal_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/paypal.mrs"}
-  onedrive_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/onedrive.mrs"}
-  microsoft_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs"}
-  apple_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple-cn.mrs"}
-  speedtest_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/ookla-speedtest.mrs"}
-  tiktok_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tiktok.mrs"}
+
+rule-providers:
+  fakeipfilter_cn: {<<: *domain_text, url: "https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/main/rules/fakeipfilter-cn.list"}
+  fakeipfilter_!cn: {<<: *domain_text, url: "https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/main/rules/fakeipfilter-!cn.list"}
+  private_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/private.mrs"}
+  ai_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs"}
+  youtube_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/youtube.mrs"}
+  google_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google.mrs"}
+  github_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/github.mrs"}
+  onedrive_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/onedrive.mrs"}
+  microsoftcn_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/microsoft@cn.mrs"}
+  microsoft_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/microsoft.mrs"}
+  applecn_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/apple@cn.mrs"}
+  apple_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/apple.mrs"}
+  telegram_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/telegram.mrs"}
+  tiktok_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/tiktok.mrs"}
+  netflix_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/netflix.mrs"}
+  paypal_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/paypal.mrs"}
+  binance_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/binance.mrs"}
+  okx_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/okx.mrs"}
+  usd_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-cryptocurrency.mrs"}
+  steamcn_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/steam@cn.mrs"}
+  steam_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/steam.mrs"}
   dlsite_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/dlsite.mrs"}
   dmm-ads_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/dmm-ads.mrs"}
   dmm-ads@ads_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/dmm-ads@ads.mrs"}
   dmm-porn_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/dmm-porn.mrs"}
   dmm_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/dmm.mrs"}
-  gfw_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/gfw.mrs"}
-  geolocation-!cn: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.mrs"}
-  cn_domain: {!!merge <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs"}
+  cn!_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/geolocation-!cn.mrs"}
+  cn_domain: {<<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/cn.mrs"}
+
   
-  cn_ip: {!!merge <<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs"}
-  google_ip: {!!merge <<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/google.mrs"}
-  telegram_ip: {!!merge <<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/telegram.mrs"}
-  netflix_ip: {!!merge <<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/netflix.mrs"}
+  disneyplus_domain: {!!merge <<: *class, url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/DisneyPlus.list"}
+  Bahamut_domain: {!!merge <<: *class, url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/Bahamut.list"}
+
+  google_ip: {<<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/google.mrs"}
+  apple_ip: {<<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo-lite/geoip/apple.mrs"}
+  telegram_ip: {<<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.mrs"}
+  netflix_ip: {<<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/netflix.mrs"}
+  cn_ip: {<<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/cn.mrs"}
+  private_ip: {<<: *ip, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/private.mrs"}
