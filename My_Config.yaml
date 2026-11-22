@@ -122,7 +122,6 @@ rules:
   - RULE-SET,private_domain,DIRECT
   - RULE-SET,ai_domain,🤖 AI
   - RULE-SET,youtube_domain,📹 YouTube
-  - RULE-SET,google_domain,🍀 Google
   - RULE-SET,github_domain,👨🏿‍💻 GitHub
   - RULE-SET,onedrive_domain,🐬 OneDrive
   - RULE-SET,microsoftcn_domain,DIRECT
@@ -255,6 +254,7 @@ rules:
   - DOMAIN-SUFFIX,live-video.net,📺 Olived
   - DOMAIN-SUFFIX,sooplive.co.kr,📺 Sooplive
   - DOMAIN-SUFFIX,sooplive.com,📺 Sooplive
+  - RULE-SET,google_domain,🍀 Google
   - RULE-SET,google_ip,🍀 Google
   - RULE-SET,cn_ip,DIRECT
   - RULE-SET,cn!_domain,🚀 默认代理
