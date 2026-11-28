@@ -128,19 +128,20 @@ rules:
   - RULE-SET,microsoft_domain,🪟 Microsoft
   - RULE-SET,applecn_domain,DIRECT
   - RULE-SET,apple_domain,🍎 Apple
+  - RULE-SET,apple_ip,🍎 Apple
   - RULE-SET,telegram_domain,📲 Telegram
+  - RULE-SET,telegram_ip,📲 Telegram
   - RULE-SET,tiktok_domain,🎵 TikTok
   - RULE-SET,netflix_domain,🎥 NETFLIX
+  - RULE-SET,netflix_ip,🎥 NETFLIX
   - RULE-SET,disneyplus_domain,🎥 Disney+
+  - DOMAIN-SUFFIX,login.disney.com,🎥 Disney+
   - RULE-SET,paypal_domain,💶 Wallet
   - RULE-SET,binance_domain,💶 Wallet
   - RULE-SET,okx_domain,💶 Wallet
   - RULE-SET,usd_domain,💶 Wallet
   - RULE-SET,steamcn_domain,DIRECT
   - RULE-SET,steam_domain,🎮 Steam
-  - RULE-SET,apple_ip,🍎 Apple
-  - RULE-SET,telegram_ip,📲 Telegram
-  - RULE-SET,netflix_ip,🎥 NETFLIX
   - RULE-SET,Bahamut_domain,📺 巴哈姆特
   - DOMAIN-SUFFIX,playno1.com,📺 巴哈姆特
   
